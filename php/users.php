@@ -61,19 +61,14 @@ class User extends Conexion {
 
 	public function update(){
 
-		$query = "update Usuarios set Nombres = :nom , Apellidos = :ape , Programa = :pro , Email = :email , Usuario = :usu ,  Contraseña = :con , token = :token , password_token = :pass_tok , active = :active where id = :id";
+		$query = "update users set name = :name , last_name = :last_name , email = :email , code = :code where id = :id";
 		$statement = $this->pdo->prepare($query);
 
 		$statement->execute(array(
-		   ':nom' => $this->nombres,
-		   ':ape' => $this->apellidos,
-		   ':pro' => $this->programa,
+		   ':name' => $this->name,
+		   ':last_name' => $this->last_name,
 		   ':email' => $this->email,
-		   ':usu' => $this->usuario,
-		   ':con' => $this->password,
-		   ':token' => $this->token,
-		   ':pass_tok' => $this->password_token,
-		   ':active' => $this->active,
+		   ':code' => $this->code,
 		   ':id' => $this->id
 		));
 

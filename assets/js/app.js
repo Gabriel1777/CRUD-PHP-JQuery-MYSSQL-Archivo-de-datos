@@ -1,6 +1,8 @@
 $(document).ready(function(){
 
+	var id = 0;
 	var error = false;
+	var action = 'save';
 	var name = $('#name');
 	var last_name = $('#last_name');
 	var email = $('#email');
@@ -41,7 +43,7 @@ $(document).ready(function(){
                     <td>${user.last_name}</td>
                     <td>${user.email}</td>
                     <td>${user.code}</td>
-                    <td><button class='btn btn-warning'>edit</button></td>
+                    <td><button class='btn btn-warning' id="btn-edit-user-${user.id}">edit</button></td>
                     <td><button class='btn btn-danger' id="btn-delete-user-${user.id}">delete</button></td>
                 </tr>`;
 			});
@@ -49,7 +51,17 @@ $(document).ready(function(){
 			table.html(html);
 
 			users.map(user => {
-				$(`#btn-delete-user-${user.id}`).click(function(e){
+				$(`#btn-edit-user-${user.id}`).click(function(e){
+					id = user.id;
+					action = 'update';
+				    name.val(user.name);
+				    code.val(user.code);
+				    email.val(user.email);
+				    last_name.val(user.last_name);
+				    $(document).scrollTop(2000000000);
+			    });
+
+			    $(`#btn-delete-user-${user.id}`).click(function(e){
 				    request({
 			            url: `php/controller.php?method=delete&id=${user.id}`,
 			            method: "DELETE"
@@ -83,7 +95,6 @@ $(document).ready(function(){
 
 	$('#save-user').click(function(){
 		error = false;
-		var formData = new FormData();
 
 		if (!email.val()){
 			error = true;
@@ -107,6 +118,7 @@ $(document).ready(function(){
 			code.removeClass('is-invalid');
 
 		if (!error){
+			var formData = new FormData();
 			formData.append('name', name.val());
 			formData.append('last_name', last_name.val());
 			formData.append('email', email.val());
@@ -115,7 +127,7 @@ $(document).ready(function(){
 			request({
         	    method: "POST",
         	    data: formData,
-        	    url: "php/controller.php?method=save",
+        	    url: "php/controller.php?method=" + action + "&id=" + id,
         	    async: true,
                 data: formData,
                 cache: false,
@@ -124,7 +136,8 @@ $(document).ready(function(){
             }).then(response => {
             	fillTable();
             	if (JSON.parse(response).code == 200){
-            	    alert("usuario creado exitosamente.");
+            		let currentAction = action == 'save' ? 'creado' : 'actualizado';
+            	    alert("usuario " + currentAction + " exitosamente.");
             	    clean();
             	}
             	else
@@ -135,10 +148,11 @@ $(document).ready(function(){
 	});
 
 	function clean(){
-		name.val('')
-		last_name.val('')
-		email.val('')
-		code.val('')
+		name.val('');
+		last_name.val('');
+		email.val('');
+		code.val('');
+		action = 'save';
 	}
 
 	$("#btn-load-file").click(function(){

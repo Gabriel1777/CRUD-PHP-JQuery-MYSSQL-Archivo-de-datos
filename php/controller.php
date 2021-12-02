@@ -59,6 +59,20 @@ class Controller {
 		return $this->showMessage("Usuario creado exitosamente.", 200);
 	}
 
+	public function update(){
+		if (!isset($_GET['id']))
+			return $this->showMessage("Debe envíar el id de usuario", 400);
+
+		$user = new User();
+		$user->id = $_GET['id'];
+		$user->name = $_POST['name'];
+		$user->last_name = $_POST['last_name'];
+		$user->email = $_POST['email'];
+		$user->code = $_POST['code'];
+		$user->update();
+		return $this->showMessage("Usuario actualizado exitosamente.", 200);
+	}
+
 	public function delete(){
 		(new User())->delete($_GET['id']);
 		return $this->showMessage('Usuario eliminado exitosamente.', 200);
