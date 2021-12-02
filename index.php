@@ -88,6 +88,9 @@
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" placeholder="name@example.com">
+                <div id="email-error" class="invalid-feedback">
+                  Please enter a message in the textarea.
+                </div>
             </div>
 
             <div class="mb-3">
@@ -97,9 +100,12 @@
                     <option value="2">Inactivo</option>
                     <option value="3">En espera</option>
                 </select>
+                <div id="code-error" class="invalid-feedback">
+                  Please enter a message in the textarea.
+                </div>
             </div>
 
-            <button id="btn-load-file" type="button" class="btn btn-primary">Guardar</button>
+            <button id="save-user" type="button" class="btn btn-primary">Guardar</button>
 		</div>
 	</main>
 

@@ -49,6 +49,16 @@ class Controller {
 		echo json_encode(['data' => (new User())->all($filter), 'code' => 200]);
 	}
 
+	public function save(){
+		$user = new User();
+		$user->name = $_POST['name'];
+		$user->last_name = $_POST['last_name'];
+		$user->email = $_POST['email'];
+		$user->code = $_POST['code'];
+		$user->save();
+		return $this->showMessage("Usuario creado exitosamente.", 200);
+	}
+
 	public function delete(){
 		(new User())->delete($_GET['id']);
 		return $this->showMessage('Usuario eliminado exitosamente.', 200);

@@ -1,5 +1,12 @@
 $(document).ready(function(){
 
+	var error = false;
+	var name = $('#name');
+	var last_name = $('#last_name');
+	var email = $('#email');
+	var code = $('#code');
+	code.val('');
+
 	function request({ url, method, data, ...rest }){
 		return $.ajax({
 			url,
@@ -48,6 +55,10 @@ $(document).ready(function(){
 			            method: "DELETE"
 		            }).then(res => {
 			            fillTable();
+			            if (JSON.parse(response).code == 200)
+            	            alert("usuario eliminado exitosamente.");
+            	        else
+            		        alert(JSON.parse(response).data);
 		            });
 			    });
 			});
@@ -70,10 +81,70 @@ $(document).ready(function(){
 		fillTable('filter=code = 3');
 	});
 
+	$('#save-user').click(function(){
+		error = false;
+		var formData = new FormData();
+
+		if (!email.val()){
+			error = true;
+			email.addClass('is-invalid');
+			$('#email-error').html('El email es requerido');
+		}
+		else if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(email.val())){
+			error = true;
+	     	email.addClass('is-invalid');
+	     	$('#email-error').html('Dirección de correo invalida');
+	    }
+	    else
+	    	email.removeClass('is-invalid');
+
+		if (!code.val()){
+			error = true;
+			code.addClass('is-invalid');
+			$('#code-error').html('El código es requerido');
+		}
+		else
+			code.removeClass('is-invalid');
+
+		if (!error){
+			formData.append('name', name.val());
+			formData.append('last_name', last_name.val());
+			formData.append('email', email.val());
+			formData.append('code', code.val());
+
+			request({
+        	    method: "POST",
+        	    data: formData,
+        	    url: "php/controller.php?method=save",
+        	    async: true,
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+            }).then(response => {
+            	fillTable();
+            	if (JSON.parse(response).code == 200){
+            	    alert("usuario creado exitosamente.");
+            	    clean();
+            	}
+            	else
+            		alert(JSON.parse(response).data);
+            });
+		}
+
+	});
+
+	function clean(){
+		name.val('')
+		last_name.val('')
+		email.val('')
+		code.val('')
+	}
+
 	$("#btn-load-file").click(function(){
 		let files = $('#load-file')[0].files;
 
-		if (true){
+		if (files.length > 0){
 			let file = files[0];
 
 			if (file.type != 'text/plain')
@@ -93,8 +164,14 @@ $(document).ready(function(){
                 processData: false,
             }).then(response => {
             	fillTable();
+            	if (JSON.parse(response).code == 200)
+            	    alert("Archivo cargado exitosamente.");
+            	else
+            		alert(JSON.parse(response).data);
             });
         }
+        else
+        	alert("Debe seleccionar un archivo de texto antes de continuar");
     });
 
     fillTable();
